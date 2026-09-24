@@ -3,12 +3,16 @@ CET CHILE - Sistema de Asistencia
 screens/admin_login.py - Pantalla 5: Acceso Administrador
 """
 
+import re
 import customtkinter as ctk
 from utils.theme import (
     COLOR_AZUL_OSCURO, COLOR_AMARILLO, COLOR_FONDO,
     COLOR_TEXTO_GRIS, COLOR_TEXTO_GRIS_CLARO, COLOR_BLANCO,
     COLOR_BORDE, COLOR_ROJO
 )
+
+# Patrón básico de correo: algo@algo.algo
+PATRON_CORREO = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
 
 
 class AdminLoginScreen(ctk.CTkFrame):
@@ -154,9 +158,12 @@ class AdminLoginScreen(ctk.CTkFrame):
         correo = self.correo_entry.get().strip()
         password = self.password_entry.get().strip()
 
-        # Validación simulada: cualquier correo/contraseña no vacíos funciona por ahora
         if not correo or not password:
             self.error_label.configure(text="Por favor completa ambos campos")
+            return
+
+        if not re.match(PATRON_CORREO, correo):
+            self.error_label.configure(text="Ingresa un correo válido (ej: nombre@dominio.cl)")
             return
 
         from screens.admin_panel import AdminPanelScreen

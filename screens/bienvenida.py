@@ -52,7 +52,7 @@ class BienvenidaScreen(ctk.CTkFrame):
         back_btn.pack(side="left")
 
         titulo = ctk.CTkLabel(
-            body, text=f"¡Bienvenido/a, {self.nombre_estudiante}!",
+            body, text=f"¡Bienvenido/a alumnos!",
             font=ctk.CTkFont(size=22, weight="bold"),
             text_color=COLOR_AZUL_OSCURO
         )

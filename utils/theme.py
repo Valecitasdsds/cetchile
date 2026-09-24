@@ -31,5 +31,5 @@ def font_boton(size=14):
     return ctk.CTkFont(size=size, weight="bold")
 
 # ---------- TAMAÑO DE VENTANA (se usa en main.py) ----------
-ANCHO_VENTANA = 900
-ALTO_VENTANA = 600
+ANCHO_VENTANA = 1280
+ALTO_VENTANA = 720

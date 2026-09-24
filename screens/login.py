@@ -112,14 +112,12 @@ class LoginScreen(ctk.CTkFrame):
 
     # ---------- ACCIONES ----------
     def on_codigo_qr(self):
-        # Simulamos que el QR fue leído correctamente y pasamos a la bienvenida
-        from screens.bienvenida import BienvenidaScreen
-        self.controller.mostrar_pantalla(BienvenidaScreen, nombre_estudiante="Catalina Cortes")
+        from screens.escaneo_qr import EscaneoQRScreen
+        self.controller.mostrar_pantalla(EscaneoQRScreen)
 
     def on_reconocimiento_facial(self):
-        # Simulamos que el rostro fue reconocido correctamente y pasamos a la bienvenida
-        from screens.bienvenida import BienvenidaScreen
-        self.controller.mostrar_pantalla(BienvenidaScreen, nombre_estudiante="Catalina Cortes")
+        from screens.reconocimiento_facial import ReconocimientoFacialScreen
+        self.controller.mostrar_pantalla(ReconocimientoFacialScreen)
 
     def on_settings(self):
         from screens.admin_login import AdminLoginScreen

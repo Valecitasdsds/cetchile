@@ -4,12 +4,14 @@ screens/historial_llegadas.py - Pantalla 4: Historial de llegadas del estudiante
 """
 
 import customtkinter as ctk
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from utils.theme import (
     COLOR_AZUL_OSCURO, COLOR_AMARILLO, COLOR_FONDO,
     COLOR_TEXTO_GRIS, COLOR_BLANCO, COLOR_BORDE, COLOR_VERDE
 )
 
-# Datos de ejemplo (luego vendrán de una base de datos real)
+# Datos de ejemplo (con la zona horaria/fecha de Chile)
 HISTORIAL_EJEMPLO = [
     {"fecha": "22/09/2026", "hora": "08:30", "estado": "Atraso"},
     {"fecha": "21/09/2026", "hora": "07:58", "estado": "A tiempo"},
@@ -25,7 +27,6 @@ class HistorialLlegadasScreen(ctk.CTkFrame):
         super().__init__(parent, fg_color=COLOR_FONDO)
         self.controller = controller
         self.nombre_estudiante = nombre_estudiante
-        # "origen" nos dice a qué pantalla volver con la flecha ←
         self.origen = origen
 
         self._build_header()
@@ -50,6 +51,27 @@ class HistorialLlegadasScreen(ctk.CTkFrame):
         body = ctk.CTkFrame(self, fg_color=COLOR_FONDO, corner_radius=0)
         body.pack(fill="both", expand=True, padx=40, pady=20)
 
+        
+        frame_filtro = ctk.CTkFrame(body, fg_color="transparent")
+        frame_filtro.pack(fill="x", pady=(0, 15))
+
+        
+        self.entry_filtro = ctk.CTkEntry(
+            frame_filtro, 
+            placeholder_text="Buscar por fecha (DD/MM/AAAA) o hora (HH:MM)...",
+            width=320
+        )
+        self.entry_filtro.pack(side="left", padx=(0, 10))
+
+        
+        btn_buscar = ctk.CTkButton(
+            frame_filtro, 
+            text="Buscar", 
+            width=100,
+            command=self.filtrar_registros 
+        )
+        btn_buscar.pack(side="left")
+
         top_row = ctk.CTkFrame(body, fg_color=COLOR_FONDO)
         top_row.pack(fill="x", pady=(10, 20))
 
@@ -69,7 +91,7 @@ class HistorialLlegadasScreen(ctk.CTkFrame):
         )
         titulo.pack(side="left", padx=(10, 0))
 
-        # Tabla
+        
         tabla_card = ctk.CTkFrame(
             body, fg_color=COLOR_BLANCO, corner_radius=10,
             border_width=1, border_color=COLOR_BORDE
@@ -90,13 +112,25 @@ class HistorialLlegadasScreen(ctk.CTkFrame):
         separador = ctk.CTkFrame(tabla_card, fg_color=COLOR_BORDE, height=1)
         separador.pack(fill="x", padx=20)
 
-        # Filas de datos
-        for registro in HISTORIAL_EJEMPLO:
-            self._fila(tabla_card, registro["fecha"], registro["hora"], registro["estado"])
+        
+        self.filas_container = ctk.CTkFrame(tabla_card, fg_color=COLOR_BLANCO)
+        self.filas_container.pack(fill="both", expand=True, padx=20, pady=5)
+
+        
+        self.renderizar_filas(HISTORIAL_EJEMPLO)
+
+    def renderizar_filas(self, lista_datos):
+        
+        for child in self.filas_container.winfo_children():
+            child.destroy()
+
+        
+        for registro in lista_datos:
+            self._fila(self.filas_container, registro["fecha"], registro["hora"], registro["estado"])
 
     def _fila(self, parent, fecha, hora, estado):
         row = ctk.CTkFrame(parent, fg_color=COLOR_BLANCO)
-        row.pack(fill="x", padx=20, pady=8)
+        row.pack(fill="x", pady=4)
 
         ctk.CTkLabel(row, text=fecha, font=ctk.CTkFont(size=12),
                      text_color=COLOR_AZUL_OSCURO, width=140, anchor="w").pack(side="left")
@@ -129,7 +163,26 @@ class HistorialLlegadasScreen(ctk.CTkFrame):
         under_line = ctk.CTkFrame(footer, fg_color=COLOR_AMARILLO, height=2, width=90)
         under_line.pack()
 
-    # ---------- ACCIONES ----------
+    # ---------- ACCIONES Y LÓGICA ----------
+    def filtrar_registros(self):
+        busqueda = self.entry_filtro.get().strip().lower()
+        
+        
+        if not busqueda:
+            self.renderizar_filas(HISTORIAL_EJEMPLO)
+            return
+
+        
+        resultados = []
+        for reg in HISTORIAL_EJEMPLO:
+            if (busqueda in reg["fecha"].lower() or 
+                busqueda in reg["hora"].lower() or 
+                busqueda in reg["estado"].lower()):
+                resultados.append(reg)
+
+        
+        self.renderizar_filas(resultados)
+
     def on_volver(self):
         if self.origen == "asistencia_registrada":
             from screens.asistencia_registrada import AsistenciaRegistradaScreen

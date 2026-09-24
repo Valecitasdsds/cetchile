@@ -156,7 +156,8 @@ class AdminPanelScreen(ctk.CTkFrame):
         self.controller.mostrar_pantalla(AdminHistorialScreen)
 
     def on_configuracion_qr(self):
-        print("Configuración QR -> pendiente (no estaba en las imágenes compartidas)")
+        from screens.configuracion_qr import ConfiguracionQRScreen
+        self.controller.mostrar_pantalla(ConfiguracionQRScreen)
 
     def on_nuevo_estudiante(self):
         from screens.nuevo_estudiante import NuevoEstudianteScreen
